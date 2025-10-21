@@ -6,8 +6,8 @@ class DatosController {
     private $modelo;
     private $cloudinary;
 
-    public function __construct($dbConn) {
-        $this->modelo = new Datos($dbConn);
+    public function __construct($dbConn,$cloudinary) {
+        $this->modelo = new Datos($dbConn,$cloudinary);
         $this->cloudinary = $cloudinary;
     }
 
