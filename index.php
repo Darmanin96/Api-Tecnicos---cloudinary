@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header("Access-Control-Allow-Origin: https://unfurbished-elissa-dcollet.ngrok-free.dev");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -46,8 +50,13 @@ try{
     $metodo = $_SERVER['REQUEST_METHOD'];
     $url = $_SERVER['REQUEST_URI'];
 
+    error_log("URL solicitada: " . $url);
+
+
     $path = parse_url($url, PHP_URL_PATH);
-    $path = str_replace('/Api-Tecnicos/', '', $path);
+    $path = str_replace('Api-Tecnicos---cloudinary/', '', $path);
+    error_log("Path después de replace: " . $path);
+
     $path = trim($path, '/');
     $dividido = explode('/', $path);
 
@@ -81,10 +90,12 @@ try{
             break;
     }
 } catch (Exception $e) {
-    http_response_code(500);
+     http_response_code(500);
     echo json_encode([
         "status" => "error", 
-        "message" => "Error interno del servidor"
+        "message" => "Error: " . $e->getMessage(),  
+        "file" => $e->getFile(),
+        "line" => $e->getLine()
     ]);
-    error_log("Error en index.php: " . $e->getMessage());
+    error_log("Error en index.php: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
 }

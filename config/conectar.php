@@ -1,17 +1,51 @@
 <?php
-require_once 'vendor/autoload.php';
-use Cloudinary\Cloudinar;
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Cloudinary\Cloudinary;
 
 class DatabaseConfig{
     private static $cloudinary = null;
     private static $db = null;
 
+
+
+
+    public static function cargarEnv(){
+        $env = __DIR__ . '/../.env';
+        if (file_exists($env)) {
+            $lines = file($env, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0) {
+                    continue;
+                }
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                if (!array_key_exists($key, $_ENV)) {
+                    putenv("$key=$value");
+                    $_ENV[$key] = $value;
+                }
+            }
+        }
+    }
+
     public static function getCloudinary() {
         if (self::$cloudinary === null) {
+            self::cargarEnv();
             $cloudName = getenv('CLOUDINARY_CLOUD_NAME');
             $apiKey = getenv('CLOUDINARY_API_KEY');
             $apiSecret = getenv('CLOUDINARY_API_SECRET');
 
+              if (!$cloudName || !$apiKey || !$apiSecret) {
+                throw new Exception(
+                    'Cloudinary configuration missing. ' .
+                    'Please check your .env file. ' .
+                    'Cloud Name: ' . ($cloudName ? 'SET' : 'MISSING') . ', ' .
+                    'API Key: ' . ($apiKey ? 'SET' : 'MISSING') . ', ' .
+                    'API Secret: ' . ($apiSecret ? 'SET' : 'MISSING')
+                );
+            }
+            
             self::$cloudinary = new Cloudinary([
                 'cloud' => [
                     'cloud_name' => $cloudName,
