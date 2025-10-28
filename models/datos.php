@@ -11,6 +11,12 @@ class Datos {
 
     public function obtenerTecnicos() {
         $sql = $this->db->prepare("SELECT * FROM tecnicos");
+        $sql->execute();   
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+       public function obtenerGastos() {
+        $sql = $this->db->prepare("SELECT * FROM gastos_tecnicos_cloudinary");
         $sql->execute();
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -50,7 +56,7 @@ class Datos {
         $urlTicket = $this->uploadToCloudinary($imagenTicket['tmp_name']);
 
         $sql = $this->db->prepare("
-            INSERT INTO `gastos_tecnicos` 
+            INSERT INTO `gastos_tecnicos_cloudinary` 
             (`nombreTecnico`, `codigoEmpleado`, `delegacion`, `importe`, `fecha`, `imagenAlimento`, `imagenTicket`)
             VALUES (:nombreTecnico, :codigoEmpleado, :delegacion, :importe, :fecha, :imagenAlimento, :imagenTicket)
         ");
@@ -66,14 +72,10 @@ class Datos {
     }
 
 
-    public function obtenerGastos() {
-        $sql = $this->db->prepare("SELECT * FROM gastos_tecnicos");
-        $sql->execute();
-        return $sql->fetchAll(PDO::FETCH_ASSOC);
-    }
+ 
 
     public function deleteGasto($id) {
-        $sqlSelect = $this->db->prepare("SELECT imagenAlimento, imagenTicket FROM gastos_tecnicos WHERE id = :id");
+        $sqlSelect = $this->db->prepare("SELECT imagenAlimento, imagenTicket FROM gastos_tecnicos_cloudinary WHERE id = :id");
         $sqlSelect->bindParam(':id', $id, PDO::PARAM_INT);
         $sqlSelect->execute();
         $gasto = $sqlSelect->fetch(PDO::FETCH_ASSOC);
@@ -83,7 +85,7 @@ class Datos {
             $this->deleteImageFromCloudinary($gasto['imagenTicket']);
         }
 
-        $sql = $this->db->prepare("DELETE FROM gastos_tecnicos WHERE id = :id");
+        $sql = $this->db->prepare("DELETE FROM gastos_tecnicos_cloudinary WHERE id = :id");
         $sql->bindParam(':id', $id, PDO::PARAM_INT);
         $sql->execute();
     }
@@ -105,7 +107,7 @@ public function updateGasto($id, $nombreTecnico, $codigoEmpleado, $delegacion, $
         }
 
         $sql = $this->db->prepare("
-            UPDATE gastos_tecnicos 
+            UPDATE gastos_tecnicos_cloudinary 
             SET nombreTecnico = :nombreTecnico, 
                 codigoEmpleado = :codigoEmpleado, 
                 delegacion = :delegacion, 
@@ -131,7 +133,7 @@ public function updateGasto($id, $nombreTecnico, $codigoEmpleado, $delegacion, $
     }
 
     private function eliminarImagenAntigua($id, $campo) {
-        $sql = $this->db->prepare("SELECT $campo FROM gastos_tecnicos WHERE id = :id");
+        $sql = $this->db->prepare("SELECT $campo FROM gastos_tecnicos_cloudinary WHERE id = :id");
         $sql->bindParam(':id', $id, PDO::PARAM_INT);
         $sql->execute();
         $resultado = $sql->fetch(PDO::FETCH_ASSOC);

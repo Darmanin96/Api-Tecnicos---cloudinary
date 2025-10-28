@@ -4,10 +4,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Cloudinary\Cloudinary;
 
 class DatabaseConfig{
+
     private static $cloudinary = null;
     private static $db = null;
-
-
 
 
     public static function cargarEnv(){
