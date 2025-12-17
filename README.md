@@ -22,7 +22,8 @@ Gestionar la subida y organización de imágenes en Cloudinary.
 
 Todas las imágenes enviadas desde Proyecto-movil (comida y ticket/factura) se almacenan automáticamente en Cloudinary, dentro de una carpeta específica:
 
-gastos_tecnicos/
+<p aligh="center"><img width="1440" height="785" alt="image" src="https://github.com/user-attachments/assets/bb1e15c9-a837-42c3-a00d-edc0830336cf" /></p>
+
 
 
 Esta estructura permite:
